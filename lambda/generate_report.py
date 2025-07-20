@@ -1,14 +1,16 @@
 import boto3
 import json
 from datetime import datetime
+import os
+
+region = os.environ.get("AWS_REGION", "us-east-1")
 
 def lambda_handler(event, context):
-    dynamodb = boto3.resource('dynamodb')
-    ses = boto3.client('ses')
+    dynamodb = boto3.resource('dynamodb', region_name=region)
+    ses = boto3.client('ses', region_name=region)
     
-    table = dynamodb.Table('processed-data')  # Replace with actual table name
+    table = dynamodb.Table('processed-data')
 
-    # Scan table to get all records (you could filter by date if needed)
     response = table.scan()
     items = response.get('Items', [])
 
