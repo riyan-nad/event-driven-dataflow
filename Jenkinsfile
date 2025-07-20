@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'github', url: 'https://github.com/riyan-nad/event-driven-dataflow.git'
+                git credentialsId: 'riyan-nad', url: 'https://github.com/riyan-nad/event-driven-dataflow.git'
             }
         }
 
