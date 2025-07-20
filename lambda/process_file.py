@@ -7,12 +7,12 @@ def lambda_handler(event, context):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('processed-data')  # Replace with actual table name
 
-    # Get bucket and file info from event
-    bucket = event['Records'][0]['s3']['bucket']['name']
-    key = event['Records'][0]['s3']['object']['key']
+    # Get bucket and key from EventBridge format
+    bucket = event['detail']['bucket']['name']
+    key = event['detail']['object']['key']
     
     print(f"Reading file from S3: bucket={bucket}, key={key}")
-    
+
     # Read file content
     response = s3.get_object(Bucket=bucket, Key=key)
     content = response['Body'].read().decode('utf-8')
