@@ -75,6 +75,12 @@ resource "aws_lambda_function" "process_file_lambda" {
   filename         = data.archive_file.process_file_lambda_zip.output_path
   source_code_hash = data.archive_file.process_file_lambda_zip.output_base64sha256
   timeout          = 30
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_basic,
+    aws_iam_role_policy_attachment.lambda_full_access,
+    aws_iam_role_policy_attachment.lambda_s3_access
+  ]
 }
 
 data "archive_file" "report_lambda_zip" {
@@ -91,6 +97,12 @@ resource "aws_lambda_function" "generate_report_lambda" {
   filename         = data.archive_file.report_lambda_zip.output_path
   source_code_hash = data.archive_file.report_lambda_zip.output_base64sha256
   timeout          = 60
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_basic,
+    aws_iam_role_policy_attachment.lambda_full_access,
+    aws_iam_role_policy_attachment.lambda_ses_access
+  ]
 }
 
 # -------------------------------
@@ -104,6 +116,9 @@ resource "aws_cloudwatch_event_rule" "s3_upload_event" {
     "detail": {
       "bucket": {
         "name": [aws_s3_bucket.upload_bucket.bucket]
+      },
+      "object": {
+        "key": [{"exists": true}]
       }
     }
   })
@@ -127,7 +142,7 @@ resource "aws_lambda_permission" "allow_eventbridge_to_invoke_lambda1" {
 # -------------------------------
 resource "aws_cloudwatch_event_rule" "daily_report_schedule" {
   name                = "DailyReportTrigger"
-  schedule_expression = "cron(10 9 * * ? *)" # 9 PM IST daily
+  schedule_expression = "cron(40 9 * * ? *)" # 3:10 PM IST = 9:40 AM UTC
 }
 
 resource "aws_cloudwatch_event_target" "daily_report_target" {
