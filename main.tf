@@ -142,7 +142,7 @@ resource "aws_lambda_permission" "allow_eventbridge_to_invoke_lambda1" {
 # -------------------------------
 resource "aws_cloudwatch_event_rule" "daily_report_schedule" {
   name                = "DailyReportTrigger"
-  schedule_expression = "cron(40 9 * * ? *)" # 3:10 PM IST = 9:40 AM UTC
+  schedule_expression = "cron(50 10 * * ? *)" # 3:10 PM IST = 9:40 AM UTC
 }
 
 resource "aws_cloudwatch_event_target" "daily_report_target" {
